@@ -40,9 +40,9 @@ springConstGibbsZFit = @(x, y) polyfit(x.^2, y, 2);
 for roundCount = 1:round
 tic
 %批量读入文件   
-read_image = @(imgCount1) imread(strcat(sources, fileList(period * (roundCount - 1) + imgCount1 + 2).name));
-I = arrayfun(read_image, 1:period, 'UniformOutput', false);
-I = cat(3, I{:});
+    read_image = @(imgCount1) imread(strcat(sources, fileList(period * (roundCount - 1) + imgCount1 + 2).name));
+    I = arrayfun(read_image, 1:period, 'UniformOutput', false);
+    I = cat(3, I{:});
 
 
 
