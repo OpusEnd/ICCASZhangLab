@@ -34,7 +34,7 @@ noinfFind = @(x) ~isinf(x);%非inf值判断
 infRemove = @(x) x(~isinf(x));%Inf值剔除
 vecLengthCheck = @(x) size(x,1);%直方图bar计数
 cellValueExtract = @(x, y) y(x) ;%依照逻辑值向量提取元素
-springConstGibbsZFit = @(x, y) polyfit(x.^2, y, 2);
+springConstGibbsZFit = @(x, y) polyfit(x.^2, y, 2);%对bin中心值的平方进行拟合（G0+1/2k*z^2),注意结果需*2
 
 
 for roundCount = 1:round
