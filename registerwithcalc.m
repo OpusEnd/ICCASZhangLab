@@ -62,7 +62,7 @@ else
     shorterList = length(fileList135);
 end
 
-for fileCount = 1 : length(shorterList)
+for fileCount = 1 : shorterList
    
      file45Name = [originFolder45, fileList45(fileCount).name];
      file135Name = [originFolder135, fileList135(fileCount).name];
