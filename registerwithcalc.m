@@ -7,7 +7,7 @@ processedFolder135 = uigerdir('F:\Data\Imagesequence\processed\output\135m\','Ch
 % maskPath = fullfile(maskFolder, 'mask.tif');
 addFolder = uigetdir('F:\Data\Imagesequence\processed\output\calculated\add\','Choose the folder for added image');
 divFolder = uigetdir('F:\Data\Imagesequence\processed\output\calculated\divide\','Choose the folder for divided image');
-subFolder = uigetdir('F:\Data\Imagesequence\processed\output\calculated\divide\','Choose the folder for substracted image');
+subFolder = uigetdir('F:\Data\Imagesequence\processed\output\calculated\substracted\','Choose the folder for substracted image');
 polarFolder = uigetdir('F:\Data\Imagesequence\processed\output\calculated\polar\','Choose the folder for polarcontrast image');
 
 fileList45 = dir(fullfile(originFolder45, '*.tif')); 
@@ -67,11 +67,11 @@ for fileCount = 1 : length(shorterList)
      file45Name = [originFolder45, fileList45(fileCount).name];
      file135Name = [originFolder135, fileList135(fileCount).name];
     
-    masked45 = imread(file45Name);
-    masked45 = imcrop(masked45,[minRow,minCol,maxRow-minRow,maxCol-minCol]);  % 将非重叠部分设置为0
     masked135 = imread(file135Name);
-    registered135 = imwarp(masked135, tform, 'OutputView', imref2d(size(masked135)));
-    masked135 = imcrop(registered135,[minRow,minCol,maxRow-minRow,maxCol-minCol]);  % 将非重叠部分设置为0
+    masked135(~mask) = 0;  % 将非重叠部分设置为0 
+    masked45 = imread(file45Name);
+    registered45 = imwarp(masked45, tform, 'OutputView', imref2d(size(masked45)));
+    registered45(~mask) = 0;  % 将非重叠部分设置为0
    
     
    
