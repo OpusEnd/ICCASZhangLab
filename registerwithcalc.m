@@ -80,8 +80,8 @@ for fileCount = 1 : shorterList
     
     fixedFilePath = fullfile(processedFolder45, fileList45(fileCount).name);
     registeredFilePath = fullfile(processedFolder135, fileList135(fileCount).name);
-    saveastifffast(single(masked45), fixedFilePath)
-    saveastifffast(single(registered135), registeredFilePath)
+    saveastifffast(single(masked45), fixedFilePath);
+    saveastifffast(single(registered135), registeredFilePath);
     
    
 end
@@ -105,10 +105,10 @@ for fileProcessedCount = 1 : length(fileProcessedList45)
     polFilePath = fullfile(polarFolder,fileProcessedList45(fileProcessedCount).name);
 
 
-    saveastifffast(single(addImage),addFilePath)
-    saveastifffast(single(divImage),divFilePath)
-    saveastifffast(single(subImage),subFilePate)
-    saveastifffast(single(polImage),polFilePath)
+    saveastifffast(single(addImage),addFilePath);
+    saveastifffast(single(divImage),divFilePath);
+    saveastifffast(single(subImage),subFilePate);
+    saveastifffast(single(polImage),polFilePath);
    
     disp(['Image-',num2str(fileProcessedCount),'calculation is finished.']);
     
