@@ -1,22 +1,22 @@
 % 指定文件路径
-originFolder45 = uigetdir('F:\2\45\','Choose the folder for 45image');
-originFolder135 = uigetdir('F:\2\135\','Choose the folder for 135image');
-processedFolder45 = uigerdir('F:\Data\Imagesequence\processed\output\45m\','Choose the folder for registered 45image');
-processedFolder135 = uigerdir('F:\Data\Imagesequence\processed\output\135m\','Choose the folder for registered 135image');
+originFolder45 = strcat(uigetdir('F:\2\45\','Choose the folder for 45image'),'\');
+originFolder135 = strcat(uigetdir('F:\2\135\','Choose the folder for 135image'),'\');
+processedFolder45 = strcat(uigetdir('F:\Data\Imagesequence\processed\output\45m\','Choose the folder for registered 45image'),'\');
+processedFolder135 = strcat(uigetdir('F:\Data\Imagesequence\processed\output\135m\','Choose the folder for registered 135image'),'\');
 % maskFolder = 'F:\Data\Imagesequence\processed\output\';
 % maskPath = fullfile(maskFolder, 'mask.tif');
-addFolder = uigetdir('F:\Data\Imagesequence\processed\output\calculated\add\','Choose the folder for added image');
-divFolder = uigetdir('F:\Data\Imagesequence\processed\output\calculated\divide\','Choose the folder for divided image');
-subFolder = uigetdir('F:\Data\Imagesequence\processed\output\calculated\substracted\','Choose the folder for substracted image');
-polarFolder = uigetdir('F:\Data\Imagesequence\processed\output\calculated\polar\','Choose the folder for polarcontrast image');
+addFolder = strcat(uigetdir('F:\Data\Imagesequence\processed\output\calculated\add\','Choose the folder for added image'),'\');
+divFolder = strcat(uigetdir('F:\Data\Imagesequence\processed\output\calculated\divide\','Choose the folder for divided image'),'\');
+subFolder = strcat(uigetdir('F:\Data\Imagesequence\processed\output\calculated\sub\','Choose the folder for substracted image'),'\');
+polarFolder = strcat(uigetdir('F:\Data\Imagesequence\processed\output\calculated\pol','Choose the folder for polarcontrast image'),'\');
 
 fileList45 = dir(fullfile(originFolder45, '*.tif')); 
 fileList135 = dir(fullfile(originFolder135, '*.tif')); 
 
 
-fileCount = 1;
-file45Name = [originFolder45, fileList45(fileCount).name];
-file135Name = [originFolder135, fileList135(fileCount).name];
+
+file45Name = [originFolder45, fileList45(3).name];
+file135Name = [originFolder135, fileList135(3).name];
 
         % 对比度插值
         fixed=imread(file45Name);    
@@ -33,7 +33,7 @@ file135Name = [originFolder135, fileList135(fileCount).name];
         optimizer.MaximumIterations = 300;
         optimizer.InitialRadius = 0.0009;
         tform = imregtform(file135Gray, file45Gray, "affine", optimizer, metric);
-        registered = imwarp(file135Gray, tform, 'OutputView', imref2d(size(binary135Closed)));
+        registered = imwarp(file135Gray, tform, 'OutputView', imref2d(size(file135Gray)));
         disp(optimizer);
         disp(metric);
         imshowpair(file45Gray,registered,"Scaling","joint");
@@ -67,11 +67,11 @@ for fileCount = 1 : shorterList
      file45Name = [originFolder45, fileList45(fileCount).name];
      file135Name = [originFolder135, fileList135(fileCount).name];
     
-    masked135 = imread(file135Name);
-    masked135(~mask) = 0;  % 将非重叠部分设置为0 
     masked45 = imread(file45Name);
-    registered45 = imwarp(masked45, tform, 'OutputView', imref2d(size(masked45)));
-    registered45(~mask) = 0;  % 将非重叠部分设置为0
+    masked45(~mask) = 0;  % 将非重叠部分设置为0 
+    masked135 = imread(file135Name);
+    registered135 = imwarp(masked135, tform, 'OutputView', imref2d(size(masked135)));
+    registered135(~mask) = 0;  % 将非重叠部分设置为0
    
     
    
@@ -80,27 +80,10 @@ for fileCount = 1 : shorterList
     
     fixedFilePath = fullfile(processedFolder45, fileList45(fileCount).name);
     registeredFilePath = fullfile(processedFolder135, fileList135(fileCount).name);
-    t = Tiff(fixedFilePath, 'w');
-    tagstruct.ImageLength = size(masked45, 1);
-    tagstruct.ImageWidth = size(masked45, 2);
-    tagstruct.Photometric = Tiff.Photometric.MinIsBlack;
-    tagstruct.BitsPerSample = 32;
-    tagstruct.SamplesPerPixel = 1;
-    tagstruct.RowsPerStrip = 16;
-    tagstruct.PlanarConfiguration = Tiff.PlanarConfiguration.Chunky;
-    tagstruct.Software = 'MATLAB';
-    tagstruct.SampleFormat = Tiff.SampleFormat.IEEEFP;
-    t.setTag(tagstruct);
-    t.write(single(masked45)); % 确保数据类型为 single
-    t.close();
+    saveastifffast(single(masked45), fixedFilePath)
+    saveastifffast(single(registered135), registeredFilePath)
     
-    % 重复上述步骤保存 overlapRegistered 图像
-    t = Tiff(registeredFilePath, 'w');
-    t.setTag(tagstruct);
-    t.write(single(masked135)); % 确保数据类型为 single
-    t.close();    
-    disp(['Image-',num2str(fileCount),' is finished.']);
-    % close all;
+   
 end
 
 fileProcessedList45 = dir(fullfile(processedFolder45, '*.tif'));
@@ -121,33 +104,12 @@ for fileProcessedCount = 1 : length(fileProcessedList45)
     divFilePath = fullfile(divFolder, fileProcessedList45(fileProcessedCount).name);
     polFilePath = fullfile(polarFolder,fileProcessedList45(fileProcessedCount).name);
 
-    t = Tiff(addFilePath, 'w');
-    tagstruct.ImageLength = size(masked45, 1);
-    tagstruct.ImageWidth = size(masked45, 2);
-    tagstruct.Photometric = Tiff.Photometric.MinIsBlack;
-    tagstruct.BitsPerSample = 32;
-    tagstruct.SamplesPerPixel = 1;
-    tagstruct.RowsPerStrip = 16;
-    tagstruct.PlanarConfiguration = Tiff.PlanarConfiguration.Chunky;
-    tagstruct.Software = 'MATLAB';
-    tagstruct.SampleFormat = Tiff.SampleFormat.IEEEFP;
-    t.setTag(tagstruct);
-    t.write(single(addImage)); % 确保数据类型为 single
-    t.close();
-    
-    % 重复上述步骤保存 overlapRegistered 图像
-    t = Tiff(divFilePath, 'w');
-    t.setTag(tagstruct);
-    t.write(single(divImage)); % 确保数据类型为 single
-    t.close();    
-    t = Tiff(subFilePath, 'w');
-    t.setTag(tagstruct);
-    t.write(single(subImage)); % 确保数据类型为 single
-    t.close();    
-    t = Tiff(polFilePath, 'w');
-    t.setTag(tagstruct);
-    t.write(single(polImage)); % 确保数据类型为 single
-    t.close();    
+
+    saveastifffast(single(addImage),addFilePath)
+    saveastifffast(single(divImage),divFilePath)
+    saveastifffast(single(subImage),subFilePate)
+    saveastifffast(single(polImage),polFilePath)
+   
     disp(['Image-',num2str(fileProcessedCount),'calculation is finished.']);
     
 end
