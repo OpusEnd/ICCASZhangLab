@@ -49,16 +49,15 @@ tic
 
     %图像对数差，获得z位移步长
     logRatio = 100 * log(imdivide(double(I(:, :, 1:period-1)), double(I(:, :, 2:period))));
-    
+     clear I;
 
 
 
-    %重构数组进行直方图统计
-   % I = reshape(logRatio, [], size(logRatio,3));
+  
    
     [N, edges] = cellfun(histFunc, num2cell(logRatio,3), 'UniformOutput', false);
 
-    clear I;
+   
 
     %对直方图进行处理得到bin中心值及频数分布
     meanEdges = cellfun(vecMean, edges, 'UniformOutput', false);
@@ -92,9 +91,7 @@ tic
 
     clear vecLengthIndex ind1
 
-    %重塑数组为图像
-    %SConst = reshape(SConst,height,width);
-    %Gibbs = reshape(Gibbs,height,width);
+    
 
 
 
