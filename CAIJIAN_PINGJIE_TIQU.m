@@ -57,7 +57,7 @@ baseFileNames = cellfun(@(file) fileparts(file), imageFileNames, 'UniformOutput'
 outputFileNames = cellfun(@(base) fullfile(A1, [base, '.tif']), baseFileNames, 'UniformOutput', false);
 
 % 创建 Tiff 对象并保存图像
-cellfun(@(file, img) saveastifffast(file, img), outputFileNames, rectRegions);
+cellfun(@(img, file) saveastifffast(img, file),  rectRegions,outputFileNames);
 
 
 %单ROI循环获取
