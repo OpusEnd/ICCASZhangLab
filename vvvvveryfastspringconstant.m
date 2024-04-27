@@ -14,7 +14,7 @@ binNum = 20;
 
 
 fileList = dir(sources);
-disp(fileList)
+
 fileName = [sources, fileList(3).name];
 
 
@@ -55,7 +55,7 @@ tic
 
     %重构数组进行直方图统计
    % I = reshape(logRatio, [], size(logRatio,3));
-    clear logRatio;
+   
     [N, edges] = cellfun(histFunc, num2cell(logRatio,3), 'UniformOutput', false);
 
     clear I;
