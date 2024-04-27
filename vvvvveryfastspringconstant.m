@@ -48,18 +48,15 @@ tic
 
 
     %图像对数差，获得z位移步长
-    logRatio = zeros(height, width, period-1);
-    for imgCount2 = 1:period-1
-        logRatio(:,:,imgCount2) = 100*log(imdivide(double(I(:, :, imgCount2)),double(I(:, :, imgCount2+1))));
-
-    end
+    logRatio = 100 * log(imdivide(double(I(:, :, 1:period-1)), double(I(:, :, 2:period))));
+    
 
 
 
     %重构数组进行直方图统计
-    I = reshape(logRatio, [], size(logRatio,3));
+   % I = reshape(logRatio, [], size(logRatio,3));
     clear logRatio;
-    [N, edges] = cellfun(histFunc, num2cell(I,2), 'UniformOutput', false);
+    [N, edges] = cellfun(histFunc, num2cell(logRatio,3), 'UniformOutput', false);
 
     clear I;
 
@@ -96,8 +93,8 @@ tic
     clear vecLengthIndex ind1
 
     %重塑数组为图像
-    SConst = reshape(SConst,height,width);
-    Gibbs = reshape(Gibbs,height,width);
+    %SConst = reshape(SConst,height,width);
+    %Gibbs = reshape(Gibbs,height,width);
 
 
 
